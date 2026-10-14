@@ -34,3 +34,9 @@ router_mappings:
   - router: gateway
     network: practice-lan
     ip: 10.80.0.1
+groups:
+  - name: idor-lab-nodes
+    nodes:
+      - kali
+      - web
+      - gateway

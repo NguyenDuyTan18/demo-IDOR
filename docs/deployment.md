@@ -31,8 +31,8 @@ Hai sandbox bước này còn độc lập. Không dùng pool cũ đã dựng t�
 ## 3. Tạo phiên thực hành tự do
 
 1. **Training Agenda → Linear Training Definitions → Upload**, chọn `training-definition.json`. Import thành bài IDOR mới.
-2. Một Info Level tên `IDOR Free Lab`; không bật variant sandboxes, không cấu hình câu hỏi/đáp án/APG. Review rồi Release.
-3. Operator kiểm tra và triển khai [frontend patch](../platform-patch/README.md) nếu muốn console/SSH controls trong màn Info Level.
+2. Một Access Level tên `IDOR Battle Lab`; không bật variant sandboxes, không cấu hình câu hỏi IDOR/đáp án/APG. Passkey công khai `finish-idor-lab` chỉ đóng run. Review rồi Release.
+3. Access Level hiển thị topology và console theo frontend chuẩn; không cần patch frontend.
 4. Tạo **Training Instance**, chọn IDOR definition, **Cloud environment**, Start/End time và Assign Pool vừa dựng. Chia sẻ access token với hai trainee.
 5. Hai tài khoản riêng mở hai run. Ghi bảng ánh xạ tại [trainee-access](trainee-access.md).
 

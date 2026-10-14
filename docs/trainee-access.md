@@ -7,7 +7,7 @@ Sandbox được gán theo **Training Run của tài khoản portal**, không th
 1. Pool IDOR có size **2**, đã Allocate hai sandbox và provisioning thành công. Chỉ đặt size 2 chưa tạo VM.
 2. Training Definition IDOR đã import/review/Release; Training Instance dùng **cloud environment**, gắn đúng pool và có Start/End time hợp lệ. Sao chép access token của chính instance đó.
 3. Trainee A và Trainee B có quyền trainee. Cho hai người mở bằng hai máy/profile trình duyệt khác nhau để giữ riêng phiên đăng nhập.
-4. Nếu muốn mở console tại Info Level, operator đã áp frontend patch và triển khai frontend mới. Khi chưa áp patch, chuẩn bị user SSH bundle riêng của từng sandbox sau khi run được gán.
+4. Access Level hiển thị topology và Open console theo chức năng gốc. Chuẩn bị user SSH bundle riêng của từng sandbox làm đường truy cập dự phòng.
 
 ## Hai người vào lab
 
@@ -15,7 +15,7 @@ Sandbox được gán theo **Training Run của tài khoản portal**, không th
 2. Trainee B đăng nhập portal bằng tài khoản B và nhập **cùng token**.
 3. Backend tìm sandbox còn trống trong pool và khóa/gán nó cho run. A và B nhận hai sandbox khác nhau. Instructor đối chiếu run ID và sandbox ID; không đoán theo thứ tự allocation.
 4. Mỗi người mở topology trong run của mình, chọn **kali → Open console**, đăng nhập Linux `user-access / ClientLab-Only-2026!`. Kali của A thuộc sandbox A; Kali của B thuộc sandbox B.
-5. Trong lúc thực hành giữ run đang mở. Chỉ bấm **Finish** khi kết thúc thực nghiệm.
+5. Trong lúc thực hành giữ run đang mở. Khi kết thúc, nhập passkey công khai `finish-idor-lab`; đây chỉ là thao tác đóng run, không phải đáp án bài IDOR.
 
 Mở hai tab bằng **cùng tài khoản portal** thường tiếp tục cùng run đang mở; đó không phải cách lấy hai sandbox. Nếu một đội có nhiều thành viên nhưng tổng pool chỉ có hai sandbox, mỗi đội dùng một đại diện mở run và phối hợp trên Kali của đội. Group trên portal không tự biến nhiều run thành một sandbox chung.
 
@@ -57,6 +57,6 @@ Mở `http://127.0.0.1:18080`. Với trainee B, thay đích thành `10.90.0.12:8
 
 Thông báo **“There is no active training session matching access token”** trong ảnh là lỗi tìm Training Instance đang hoạt động theo token, xảy ra trước bước truy cập Kali. Kiểm tra token đúng instance, thời gian Start/End và múi giờ/server clock; tạo Sandbox Definition/pool không tự tạo phiên training đang hoạt động.
 
-Nếu run mở nhưng báo thiếu sandbox, kiểm tra hai sandbox đã Allocate/provision xong, pool được assign đúng instance và không bị run khác chiếm. Nếu không thấy topology ở Info Level, kiểm tra frontend patch, cloud environment và tên level chính xác `IDOR Free Lab`. Nếu web nội bộ được nhưng web đội kia không được, kiểm tra bước Terraform/Ansible của mạng battle; pool size 2 tự nó không nối mạng.
+Nếu run mở nhưng báo thiếu sandbox, kiểm tra hai sandbox đã Allocate/provision xong, pool được assign đúng instance và không bị run khác chiếm. Nếu Access Level không thấy topology, kiểm tra Training Instance đang dùng cloud environment, pool đã được gán và trainee có role sandbox trainee. Nếu web nội bộ được nhưng web đội kia không được, kiểm tra bước Terraform/Ansible của mạng battle; pool size 2 tự nó không nối mạng.
 
 Nguồn: [Training Instance](https://docs.platform.cyberrange.cz/user-guide-basic/training-agenda/training-instance/), [Training Run](https://docs.platform.cyberrange.cz/user-guide-basic/training-agenda/training-run/linear-training-run/), [backend cấp/tiếp tục run](https://github.com/cyberrangecz/backend-training/blob/fe3930412eefb2cf343b2e172df6d81cebf3041b/training-service/src/main/java/cz/cyberrange/platform/training/service/facade/TrainingRunFacade.java).

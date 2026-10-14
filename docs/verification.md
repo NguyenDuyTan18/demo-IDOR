@@ -2,6 +2,18 @@
 
 Kiểm tra local ngày 14/10/2026. Chưa đăng nhập deployment, chưa tạo pool, chưa attach NIC trên cloud và chưa triển khai frontend của người dùng.
 
+## TDD: topology trong Training Run
+
+User journey: trainee mở bài trên cloud và thấy topology/Open console của sandbox được gán, không cần sửa frontend của platform.
+
+| Giai đoạn | Lệnh/đích kiểm tra | Kết quả |
+|---|---|---|
+| RED | `DefinitionTests` | Thất bại vì level còn là `INFO_LEVEL` và `topology.yml` thiếu `groups` |
+| GREEN | `python -m unittest discover -s tests -v` | 20 tests đạt sau khi đổi sang `ACCESS_LEVEL`, thêm nội dung/passkey bắt buộc và group hợp lệ |
+| Mã frontend tham chiếu | `updateTopologyAllowed` | Cho phép topology khi level type là Access và Training Instance không dùng local environment |
+
+Topology chỉ mô tả một sandbox. Test không khẳng định UI có thể vẽ cạnh sang sandbox khác; mạng battle là attachment OpenStack ngoài Topology Definition và được xác minh bằng health check sau triển khai.
+
 | Hạng mục | Kết quả |
 |---|---|
 | Python unittest | 20 tests đạt: web/session/IDOR, hai HTTP server riêng, schema lab và NIC helper |
@@ -9,7 +21,7 @@ Kiểm tra local ngày 14/10/2026. Chưa đăng nhập deployment, chưa tạo p
 | Terraform | fmt/validate đạt với Terraform 1.16.6, OpenStack provider 3.4.0 |
 | Terraform mock tests | 5 tests đạt: bốn port/attachment, không DHCP/gateway, từ chối placeholder/VM trùng/sai role/pool sai |
 | Ansible | Cả provisioning và configure-guests đều đạt syntax-check trên Ansible core 2.20.10 |
-| Frontend policy | 9 trường hợp đạt trên source tham chiếu; git apply --check đạt trên checkout tham chiếu |
+| Topology trong Training Run | Definition dùng Access Level chuẩn; không phụ thuộc frontend patch |
 | Dependency audit | pip-audit cho requirements-dev và requirements-runner: không phát hiện lỗ hổng đã biết trong bộ dependency được resolve lúc kiểm tra |
 
 TDD: sáu tests NIC đầu tiên thất bại khi helper chưa tồn tại, sau đó đạt khi triển khai helper; bổ sung tests cho NetworkManager/networkd/oneshot, MAC sai, profile ngoại lai, IP chưa được đặt và default route thay đổi. Web có tests IDOR đọc/cập nhật, phiên đối chứng owner-check, phiên hết hạn, database và cookie tách riêng. Trình duyệt đã kiểm tra login đúng/sai, đọc/cập nhật phiếu và logout của cùng app ServiceDesk trong bản free-lab trước; giao diện app không thay đổi trong bản battle.
@@ -18,7 +30,7 @@ Mock Terraform thay thế OpenStack provider và module đọc VM hiện hữu. 
 
 NIC tests dùng filesystem/command runner giả lập. Cần kiểm tra bốn VM thật, routing, HTTP hai chiều và sau reboot. Ansible syntax-check không phải provisioning thành công trên VM.
 
-Frontend tham chiếu: `6e6e156c1dfdeac86741f4f51b74fcaf4f092c2a`; backend training: `fe3930412eefb2cf343b2e172df6d81cebf3041b`. Chưa xác nhận source deployment **v2026.02** trong ảnh; operator phải kiểm tra patch, build/test và triển khai bản tương ứng. Không tuyên bố toàn bộ Angular đã build hoặc cloud E2E đã đạt.
+Backend training tham chiếu: `fe3930412eefb2cf343b2e172df6d81cebf3041b`. Access Level là loại level chuẩn dành cho truy cập cloud và yêu cầu passkey; source không sửa frontend v2026.02. Chưa chạy cloud E2E trên deployment thật.
 
 ## Kiểm tra chấp nhận trên deployment
 
@@ -33,10 +45,10 @@ Frontend tham chiếu: `6e6e156c1dfdeac86741f4f51b74fcaf4f092c2a`; backend train
 
 | Tiêu chí | Điểm /5 | Bằng chứng và điểm cần cải thiện |
 |---|---|---|
-| Chính xác | 4 | Python/Ansible/Terraform kiểm tra đạt; cần xác nhận cloud thật và frontend v2026.02 |
+| Chính xác | 4 | Python/Ansible/Terraform kiểm tra đạt; cần xác nhận topology và mạng battle trên cloud thật |
 | Đầy đủ | 4 | Có source, cấu hình mạng, hướng dẫn hai run/sandbox, Git/ZIP; chưa có credentials để nghiệm thu deployment |
 | Rõ ràng | 4 | Bảng phân biệt portal ID/UUID, địa chỉ hai đội; thuật ngữ Nova/Neutron còn cần nền tảng OpenStack |
 | Thực hiện được | 4 | Có tfvars/inventory mẫu, lệnh plan/apply, health và mapping guard; operator phải điền ID thực tế |
 | Ngắn gọn | 4 | README dẫn tới hướng dẫn riêng; tài liệu triển khai vẫn dài vì có hai bước platform và cloud |
 
-Trung bình: **4.0/5**. Cải thiện ưu tiên: chạy nghiệm thu cloud hai chiều và reboot; xác nhận/build frontend đúng phiên bản; ghi lại run/sandbox/VM và HTTP evidence trong luận văn. Người dùng có thể đồng ý với đánh giá này nếu phân biệt rõ source đã kiểm tra với deployment chưa chạy.
+Trung bình: **4.0/5**. Cải thiện ưu tiên: chạy nghiệm thu cloud hai chiều và reboot; ghi lại run/sandbox/VM, topology và HTTP evidence trong luận văn. Người dùng có thể đồng ý với đánh giá này nếu phân biệt rõ source đã kiểm tra với deployment chưa chạy.

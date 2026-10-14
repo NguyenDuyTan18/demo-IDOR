@@ -13,7 +13,7 @@ Pool size 2
     Kali A → web B; Kali B → web A
 ```
 
-Đây là lab thực hành tự do: **không có câu hỏi, ô đáp án, flag hoặc APG**. Training Definition chỉ có một Info Level hướng dẫn. Các web có database/session riêng; hai đội thực nghiệm quyền đọc và cập nhật phiếu của đối phương, ghi kết quả vào báo cáo luận văn.
+Đây là lab thực hành tự do: **không có câu hỏi IDOR, flag hoặc APG**. Training Definition dùng một Access Level để CyberRangeCZ hiển thị topology và Open console theo cơ chế gốc. Access Level bắt buộc có passkey; `finish-idor-lab` được công khai trong nội dung và chỉ dùng để kết thúc run. Các web có database/session riêng; hai đội thực nghiệm quyền đọc và cập nhật phiếu của đối phương, ghi kết quả vào báo cáo luận văn.
 
 ## Cấu trúc Git
 
@@ -36,7 +36,6 @@ battle-network/
   configure-guests.yml
   inventory.example.yml
   guest/configure_nic.py
-platform-patch/{allow-free-lab.patch,test-policy.cjs,README.md}
 tests/{test_lab,test_battle_nic}.py
 docs/{deployment,trainee-access,verification}.md
 ```
@@ -53,7 +52,7 @@ docs/{deployment,trainee-access,verification}.md
 
 Chi tiết: [triển khai](docs/deployment.md), [cấp và truy cập sandbox](docs/trainee-access.md), [mạng hai đội](battle-network/README.md).
 
-Frontend chuẩn ẩn topology ở Info Level. Operator cần kiểm tra/ap dụng [frontend patch](platform-patch/README.md), build và triển khai frontend để có console ngay tại lab. Git import không tự áp patch. Patch đã kiểm tra trên source tham chiếu; cần kiểm tra lại bản **v2026.02** đang dùng. Khi chưa có patch, instructor cấp riêng **user SSH bundle** của sandbox đã gán cho từng trainee.
+Access Level làm topology và Open console xuất hiện mà không cần sửa hoặc build lại frontend v2026.02. Sơ đồ chỉ biểu diễn Kali, web, gateway và LAN thuộc sandbox của run hiện tại. Mạng battle nối sang sandbox còn lại được gắn sau allocation nên không xuất hiện thành một cạnh trên sơ đồ; địa chỉ đối phương nằm trong nội dung level và `/home/user-access/battle-lab.txt`.
 
 ## Địa chỉ và tài khoản lab
 

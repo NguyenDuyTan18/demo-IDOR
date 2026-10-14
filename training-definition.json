@@ -1,6 +1,6 @@
 {
   "title": "IDOR Battle Lab — Hai đội thực hành tự do",
-  "description": "Hai trainee nhận hai sandbox riêng gồm Kali và ServiceDesk. Instructor nối thêm mạng battle chung để mỗi đội thực nghiệm IDOR trên web đối phương; không có câu hỏi hoặc ô nộp đáp án.",
+  "description": "Hai trainee nhận hai sandbox riêng gồm Kali và ServiceDesk. Access Level hiển thị topology và console bằng chức năng gốc của CyberRangeCZ; instructor nối thêm mạng battle chung để mỗi đội thực nghiệm IDOR trên web đối phương.",
   "prerequisites": ["HTTP và session cookie", "Thao tác Linux cơ bản"],
   "outcomes": ["Kiểm tra quyền đọc đối tượng", "Kiểm tra quyền cập nhật đối tượng", "Ghi nhận và giải thích tác động của IDOR"],
   "state": "UNRELEASED",
@@ -9,12 +9,14 @@
   "variant_sandboxes": false,
   "levels": [
     {
-      "title": "IDOR Free Lab",
-      "level_type": "INFO_LEVEL",
+      "title": "IDOR Battle Lab",
+      "level_type": "ACCESS_LEVEL",
       "order": 0,
       "estimated_duration": 60,
       "minimal_possible_solve_time": null,
-      "content": "# IDOR Battle Lab\n\nMỗi tài khoản trainee có một sandbox riêng với Kali và web ServiceDesk. Instructor đã ghi nhận sandbox của từng đội và cấu hình mạng battle để hai đội truy cập web của nhau.\n\n## Truy cập\n\nMở topology, chọn **kali → Open console**. Linux: `user-access / ClientLab-Only-2026!`. Web nội bộ: `http://10.80.0.20:8080`. Đăng nhập ServiceDesk bằng `alice / IdorLab-Only-2026!`. Nếu chưa có topology, dùng user SSH bundle của chính sandbox mình do instructor cấp; GUI cần Kali image có desktop/VNC.\n\nMở terminal Kali và đọc `cat ~/battle-lab.txt` để biết mình thuộc đội A hay B. **Kali đội A truy cập web đội B tại `http://10.90.0.22:8080`; Kali đội B truy cập web đội A tại `http://10.90.0.12:8080`.** File này xuất hiện sau khi instructor nối mạng battle. Nếu chưa có file hoặc chưa truy cập được đối phương, báo instructor kiểm tra mạng. Web hai đội có database và session riêng; cần đăng nhập trên URL đích đang dùng.\n\n## Thực nghiệm\n\nQuan sát các request khi mở phiếu và cập nhật trạng thái. Thay đổi tham chiếu đối tượng trong API; ghi owner, URL đích, HTTP status và dữ liệu trước/sau. Kiểm tra tác động lên web đối phương và so sánh với web nội bộ. Người học tự lựa chọn công cụ, trình tự và cách ghi báo cáo.\n\nKhông có câu hỏi, passkey, flag hoặc ô nộp đáp án. Chỉ nhấn **Finish** khi kết thúc thực hành; giữ run đang mở khi còn dùng VM. Mỗi đội dùng một tài khoản đại diện mở run nếu pool chỉ có hai sandbox."
+      "passkey": "finish-idor-lab",
+      "cloud_content": "# IDOR Battle Lab\n\nMỗi tài khoản trainee có một sandbox riêng với Kali và web ServiceDesk. Topology bên cạnh chỉ hiển thị sandbox đang được gán cho tài khoản của bạn. Đường nối sang sandbox đội kia nằm trên mạng battle OpenStack nên không được vẽ thành cạnh trong topology.\n\n## Truy cập\n\nTrong topology, chọn **kali → Open console**. Linux: `user-access / ClientLab-Only-2026!`. Web nội bộ: `http://10.80.0.20:8080`. Đăng nhập ServiceDesk: `alice / IdorLab-Only-2026!`.\n\nMở terminal Kali và chạy `cat ~/battle-lab.txt` để biết mình thuộc đội A hay B. **Kali đội A truy cập web đội B tại `http://10.90.0.22:8080`; Kali đội B truy cập web đội A tại `http://10.90.0.12:8080`.** Nếu chưa có file hoặc chưa truy cập được URL đối phương, báo instructor kiểm tra bước nối mạng battle. Web hai đội có database và session riêng; đăng nhập riêng trên URL đích.\n\n## Thực nghiệm\n\nQuan sát request khi mở phiếu và cập nhật trạng thái. Thay đổi tham chiếu đối tượng trong API; ghi owner, URL đích, HTTP status và dữ liệu trước/sau. Kiểm tra tác động lên web đối phương và so sánh với web nội bộ.\n\nGiữ level này đang mở trong lúc dùng VM. Khi kết thúc, nhập passkey công khai `finish-idor-lab` để đóng run. Passkey chỉ là nút kết thúc do Access Level của CyberRangeCZ bắt buộc, không phải đáp án IDOR hoặc flag.",
+      "local_content": "Lab này được thiết kế cho cloud sandbox. Hãy mở Training Instance sử dụng cloud environment. Khi kết thúc, nhập passkey `finish-idor-lab`."
     }
   ]
 }
