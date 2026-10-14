@@ -156,7 +156,7 @@ class PortalTests(unittest.TestCase):
 
 
 class DefinitionTests(unittest.TestCase):
-    def test_free_lab_has_one_info_level_and_no_submission(self):
+    def test_free_lab_uses_native_access_level_for_topology(self):
         source = ROOT / 'training-definition.json'
         self.assertTrue(source.exists(), 'Free lab definition is required')
         definition = json.loads(source.read_text(encoding='utf-8'))
@@ -164,9 +164,14 @@ class DefinitionTests(unittest.TestCase):
         self.assertFalse(definition['show_stepper_bar'])
         self.assertEqual(len(definition['levels']), 1)
         level = definition['levels'][0]
-        self.assertEqual(level['level_type'], 'INFO_LEVEL')
-        self.assertEqual(level['title'], 'IDOR Free Lab')
-        for key in ['answer', 'answer_variable_name', 'passkey', 'questions', 'max_score']:
+        self.assertEqual(level['level_type'], 'ACCESS_LEVEL')
+        self.assertEqual(level['title'], 'IDOR Battle Lab')
+        self.assertEqual(level['passkey'], 'finish-idor-lab')
+        self.assertIn('finish-idor-lab', level['cloud_content'])
+        self.assertIn('10.90.0.22:8080', level['cloud_content'])
+        self.assertIn('10.90.0.12:8080', level['cloud_content'])
+        self.assertTrue(level['local_content'].strip())
+        for key in ['answer', 'answer_variable_name', 'questions', 'max_score', 'content']:
             self.assertNotIn(key, level)
 
     def test_primary_topology_keeps_one_private_lan_per_sandbox(self):
@@ -177,6 +182,9 @@ class DefinitionTests(unittest.TestCase):
         self.assertEqual(len(topology['networks']), 1)
         self.assertEqual(len(topology['routers']), 1)
         self.assertEqual(len(topology['net_mappings']), 2)
+        self.assertEqual(topology['groups'], [
+            {'name': 'idor-lab-nodes', 'nodes': ['kali', 'web', 'gateway']}
+        ])
         self.assertFalse((ROOT / 'interconnect').exists())
         self.assertFalse((ROOT / 'variables.yml').exists())
 
