@@ -69,16 +69,35 @@ class BattleControlTests(unittest.TestCase):
 
     def test_commands_use_saved_plan_and_generated_inventory_without_shell(self):
         runtime = Path(self.temp.name) / 'runtime'
-        commands = self.module.commands_for('deploy', runtime)
-        self.assertEqual(commands[0][-2:], ['-chdir=' + str(ROOT / 'battle-network/terraform'), 'init'])
-        self.assertIn('battle.tfplan', commands[2])
-        self.assertEqual(commands[-1][0], 'ansible-playbook')
-        self.assertIn(str(runtime / 'inventory.yml'), commands[-1])
+        plan_commands = self.module.commands_for('plan', runtime)
+        deploy_commands = self.module.commands_for('deploy', runtime)
+        self.assertEqual(plan_commands[0][-2:], ['-chdir=' + str(ROOT / 'battle-network/terraform'), 'init'])
+        self.assertTrue(any(part.endswith('battle.tfplan') for part in plan_commands[-1]))
+        self.assertFalse(any('plan' in command for command in deploy_commands))
+        self.assertEqual(deploy_commands[2][2], 'apply')
+        self.assertTrue(deploy_commands[2][-1].endswith('battle.tfplan'))
+        self.assertEqual(deploy_commands[-1][0], 'ansible-playbook')
+        self.assertIn(str(runtime / 'inventory.yml'), deploy_commands[-1])
 
     def test_example_config_is_valid_json_with_placeholders(self):
         example = json.loads((ROOT / 'battle-network/battle-config.example.json').read_text())
         self.assertEqual(set(example['teams']), {'A', 'B'})
         self.assertEqual(example['pool_id'], 1)
+
+    def test_deploy_requires_a_reviewed_plan_for_the_same_config(self):
+        runtime = Path(self.temp.name) / 'runtime'
+        runtime.mkdir()
+        with self.assertRaisesRegex(ValueError, 'plan'):
+            self.module.require_reviewed_plan(self.config, runtime)
+
+        (runtime / 'battle.tfplan').write_bytes(b'plan')
+        (runtime / 'reviewed-config.json').write_text(
+            json.dumps(self.config, sort_keys=True), encoding='utf-8')
+        self.module.require_reviewed_plan(self.config, runtime)
+        changed = json.loads(json.dumps(self.config))
+        changed['pool_id'] = 8
+        with self.assertRaisesRegex(ValueError, 'changed'):
+            self.module.require_reviewed_plan(changed, runtime)
 
 
 if __name__ == '__main__':
